@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz TV — Tecnologie Display 2026 | DML Italia</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --card: #1a2235;
+    --border: #1e2d45;
+    --accent: #00c2ff;
+    --accent2: #7c3aed;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #e8edf5;
+    --muted: #6b7a99;
+    --timer-safe: #10b981;
+    --timer-warn: #f59e0b;
+    --timer-danger: #ef4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(0,194,255,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 90%, rgba(124,58,237,0.07) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-top: 16px;
+  }
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,194,255,0.08);
+    border: 1px solid rgba(0,194,255,0.2);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .logo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.4)} }
+
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #e8edf5 30%, #00c2ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: 10px;
+    font-weight: 300;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 20px;
+    transition: all .3s;
+  }
+
+  /* REGISTRATION */
+  .reg-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .reg-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    transition: border-color .2s;
+    appearance: none;
+  }
+  .reg-input:focus { outline: none; border-color: var(--accent); }
+  .reg-input option { background: #1a2235; }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:520px){ .info-grid { grid-template-columns: 1fr; } }
+
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .info-box strong { display: block; color: var(--text); font-size: 0.9rem; }
+  .info-icon { font-size: 1.4rem; }
+
+  .btn-start {
+    width: 100%;
+    margin-top: 24px;
+    background: linear-gradient(135deg, #00c2ff, #7c3aed);
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,194,255,0.25); }
+  .btn-start:active { transform: translateY(0); }
+
+  /* TIMER BAR */
+  .timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .timer-display {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    min-width: 64px;
+    color: var(--timer-safe);
+    transition: color .3s;
+  }
+  .timer-display.warn { color: var(--timer-warn); }
+  .timer-display.danger { color: var(--timer-danger); animation: blink .6s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .timer-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .timer-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--timer-safe);
+    transition: width .9s linear, background .3s;
+  }
+  .timer-bar-fill.warn { background: var(--timer-warn); }
+  .timer-bar-fill.danger { background: var(--timer-danger); }
+
+  .progress-info {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-align: right;
+    margin-bottom: 8px;
+  }
+
+  /* QUESTION */
+  .q-number {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(0,194,255,0.05); transform: translateX(3px); }
+  .option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--border);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    transition: all .15s;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .option-btn:hover:not(:disabled) .option-letter { background: rgba(0,194,255,0.2); color: var(--accent); }
+
+  .option-btn.selected { border-color: var(--accent); background: rgba(0,194,255,0.08); }
+  .option-btn.selected .option-letter { background: var(--accent); color: #fff; }
+
+  .option-btn.correct { border-color: var(--green); background: rgba(16,185,129,0.1); }
+  .option-btn.correct .option-letter { background: var(--green); color: #fff; }
+  .option-btn.wrong { border-color: var(--red); background: rgba(239,68,68,0.1); }
+  .option-btn.wrong .option-letter { background: var(--red); color: #fff; }
+  .option-btn.reveal { border-color: var(--green); background: rgba(16,185,129,0.06); }
+  .option-btn.reveal .option-letter { background: var(--green); color: #fff; }
+
+  .option-btn:disabled { cursor: default; transform: none; }
+
+  /* FEEDBACK */
+  .feedback-box {
+    margin-top: 18px;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    display: none;
+    border-left: 3px solid;
+  }
+  .feedback-box.correct-fb { background: rgba(16,185,129,0.08); border-color: var(--green); color: #86efac; }
+  .feedback-box.wrong-fb   { background: rgba(239,68,68,0.08);  border-color: var(--red);   color: #fca5a5; }
+  .feedback-box .fb-title { font-weight: 700; margin-bottom: 4px; font-family: 'Syne', sans-serif; }
+
+  .btn-next {
+    margin-top: 20px;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 13px;
+    color: var(--accent);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    display: none;
+    transition: all .15s;
+  }
+  .btn-next:hover { background: rgba(0,194,255,0.1); }
+
+  /* RESULTS */
+  .result-score-ring {
+    text-align: center;
+    margin: 8px 0 28px;
+  }
+  .score-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid;
+    position: relative;
+  }
+  .score-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .score-den { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+  .verdict-badge {
+    display: inline-block;
+    padding: 6px 20px;
+    border-radius: 999px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .verdict-text { font-size: 0.95rem; color: var(--muted); line-height: 1.6; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 20px 0; }
+  @media(max-width:420px){ .stats-grid { grid-template-columns: 1fr; } }
+
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-val { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; }
+  .stat-lbl { font-size: 0.72rem; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .advice-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-top: 16px;
+  }
+  .advice-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .advice-text { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+
+  .wrong-list { margin-top: 20px; }
+  .wrong-list-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+  .wrong-item {
+    background: var(--surface);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 0.83rem;
+    line-height: 1.5;
+  }
+  .wrong-item .wi-q { color: var(--muted); margin-bottom: 4px; }
+  .wrong-item .wi-a { color: var(--red); }
+  .wrong-item .wi-c { color: var(--green); }
+
+  .btn-send {
+    width: 100%;
+    margin-top: 24px;
+    background: linear-gradient(135deg, #00c2ff, #7c3aed);
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn-send:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.35); }
+
+  .date-row { font-size: 0.8rem; color: var(--muted); text-align: center; margin-top: 12px; }
+
+  /* Penalty notice */
+  .penalty-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: rgba(239,68,68,0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    z-index: 999;
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+    white-space: nowrap;
+  }
+  .penalty-toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Hidden */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="penalty-toast" id="penaltyToast">−1 punto per domanda non risposta</div>
+
+<div class="wrap">
+
+  <div class="header">
+    <div class="logo-badge"><span class="logo-dot"></span> DML Italia · Formazione Prodotto</div>
+    <h1>Tecnologie Display TV<br>MiniLED, QLED & Micro RGB</h1>
+    <p>Guida alle sigle 2026 — Test di preparazione per addetti vendita</p>
+  </div>
+
+  <!-- REGISTRATION SCREEN -->
+  <div class="card" id="regScreen">
+    <label class="reg-label">Nome</label>
+    <input class="reg-input" type="text" id="inNome" placeholder="Inserisci il tuo nome">
+
+    <label class="reg-label">Cognome</label>
+    <input class="reg-input" type="text" id="inCognome" placeholder="Inserisci il tuo cognome">
+
+    <label class="reg-label">Punto Vendita</label>
+    <select class="reg-input" id="inStore">
+      <option value="">— Seleziona il tuo punto vendita —</option>
+      <option>Fano</option>
+      <option>Monsano</option>
+      <option>Osimo</option>
+      <option>Macerata</option>
+      <option>Civitanova</option>
+      <option>Pesaro</option>
+      <option>Foligno</option>
+    </select>
+
+    <div class="info-grid">
+      <div class="info-box"><span class="info-icon">⏱️</span><div><strong>5 minuti</strong>Tempo totale</div></div>
+      <div class="info-box"><span class="info-icon">📋</span><div><strong>20 domande</strong>Tecnologie display TV</div></div>
+      <div class="info-box"><span class="info-icon">✅</span><div><strong>+2 punti</strong>Risposta corretta</div></div>
+      <div class="info-box"><span class="info-icon">⏭️</span><div><strong>−1 punto</strong>Domanda non risposta</div></div>
+    </div>
+
+    <button class="btn-start" onclick="startQuiz()">INIZIA IL QUIZ →</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quizScreen" class="hidden">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+      <div class="timer-wrap" style="flex:1; margin-bottom:0;">
+        <span class="timer-display" id="timerDisplay">5:00</span>
+        <div class="timer-bar-track"><div class="timer-bar-fill" id="timerBar"></div></div>
+      </div>
+    </div>
+    <div class="progress-info" id="progressInfo">Domanda 1 di 20</div>
+
+    <div class="card">
+      <div class="q-number" id="qNumber">DOMANDA 1 / 20</div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="optionsWrap"></div>
+      <div class="feedback-box" id="feedbackBox">
+        <div class="fb-title" id="fbTitle"></div>
+        <div id="fbText"></div>
+      </div>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">PROSSIMA DOMANDA →</button>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="resultScreen" class="hidden">
+    <div class="card">
+      <div class="result-score-ring">
+        <div class="score-circle" id="scoreCircle">
+          <span class="score-num" id="scoreNum">—</span>
+          <span class="score-den">/ 40</span>
+        </div>
+        <div class="verdict-badge" id="verdictBadge">—</div>
+        <div class="verdict-text" id="verdictText">—</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-val" id="statCorr" style="color:var(--green)">—</div><div class="stat-lbl">Corrette</div></div>
+        <div class="stat-box"><div class="stat-val" id="statWrong" style="color:var(--red)">—</div><div class="stat-lbl">Errate</div></div>
+        <div class="stat-box"><div class="stat-val" id="statSkip" style="color:var(--yellow)">—</div><div class="stat-lbl">Non risp.</div></div>
+      </div>
+
+      <div class="advice-box">
+        <div class="advice-title">💡 Consiglio personale</div>
+        <div class="advice-text" id="adviceText">—</div>
+      </div>
+
+      <div class="wrong-list" id="wrongList"></div>
+
+      <button class="btn-send" onclick="sendEmail()">📧 INVIA RISULTATO AL RESPONSABILE</button>
+      <div class="date-row" id="dateRow"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ========== DATI QUIZ ========== */
+const QUESTIONS = [
+  {
+    q: "Quante sono le categorie principali in cui si suddividono tutti i televisori e display sul mercato?",
+    opts: ["Tre: LCD, OLED e Plasma", "Due: quelli con retroilluminazione e quelli auto-emissivi", "Quattro: LED, OLED, Plasma e MiniLED", "Una sola: tutti i TV usano una retroilluminazione"],
+    ans: 1,
+    fb: "Esistono solo due grandi famiglie: i TV con retroilluminazione (LCD) e quelli auto-emissivi (OLED, Plasma, Micro LED, ecc.). Nessuna via di mezzo."
+  },
+  {
+    q: "Quale delle seguenti tecnologie appartiene alla categoria dei display AUTO-EMISSIVI?",
+    opts: ["QLED", "MiniLED Full Array", "OLED", "LED Edge"],
+    ans: 2,
+    fb: "L'OLED è auto-emissivo: ogni pixel genera luce autonomamente senza bisogno di retroilluminazione. QLED, MiniLED e LED Edge sono tutti TV LCD retroilluminati."
+  },
+  {
+    q: "Un televisore OLED 4K è composto da circa quanti pixel auto-illuminanti indipendenti?",
+    opts: ["4 milioni", "6 milioni", "8 milioni", "16 milioni"],
+    ans: 2,
+    fb: "Un OLED 4K è formato da circa 8 milioni di pixel auto-illuminanti totalmente indipendenti gli uni dagli altri, il che garantisce neri assoluti e contrasto perfetto."
+  },
+  {
+    q: "Quale colore emettono i diodi LED usati come base nei televisori LCD a retroilluminazione LED standard?",
+    opts: ["Rosso", "Verde", "Bianco", "Blu"],
+    ans: 3,
+    fb: "I TV LCD a LED utilizzano diodi di colore BLU come sorgente principale. Questa luce blu viene poi trasformata in rosso e verde tramite filtri, fosfori o nanocristalli Quantum Dot."
+  },
+  {
+    q: "Cosa significa la sigla QLED?",
+    opts: ["TV LED con pannello auto-emissivo al quarzo", "TV LED con nanocristalli Quantum Dot", "TV con retroilluminazione quadrupla ad alta densità", "TV con quattro livelli di local-dimming indipendente"],
+    ans: 1,
+    fb: "QLED indica un TV LED che integra nanocristalli Quantum Dot. La tecnologia Quantum Dot ha aumentato significativamente l'efficienza luminosa e la copertura dello spazio colore."
+  },
+  {
+    q: "Cosa indica la sigla FALD, spesso associata ai migliori televisori QLED?",
+    opts: ["Fast Adaptive Light Diffusion", "Full Array Local-Dimming", "Frequency Adjusted LED Display", "Forward Active Luminance Driver"],
+    ans: 1,
+    fb: "FALD sta per Full Array Local-Dimming: i LED sono disposti su tutta la superficie retro-pannello e suddivisi in cluster di zone di controllo indipendente della luminosità."
+  },
+  {
+    q: "Con quale sigla commerciale Samsung ha lanciato i propri primi televisori LCD MiniLED?",
+    opts: ["QLED Pro", "Neo QLED", "Super QLED MiniLED", "Samsung MiniLED Ultra"],
+    ans: 1,
+    fb: "Samsung ha battezzato i propri TV MiniLED con il nome 'Neo QLED'. I MiniLED rappresentano l'evoluzione dei QLED: diodi più piccoli, più efficienti, con molte più zone di controllo."
+  },
+  {
+    q: "Qual è il picco massimo di luminanza HDR che i migliori televisori MiniLED riescono attualmente a raggiungere?",
+    opts: ["2.000 nit", "5.000 nit", "10.000 nit", "20.000 nit"],
+    ans: 2,
+    fb: "I migliori televisori MiniLED nella loro massima espressione raggiungono picchi di luminanza HDR fino a 10.000 nit, rendendoli ideali in qualsiasi condizione ambientale."
+  },
+  {
+    q: "Quando si valuta un TV MiniLED, qual è il parametro tecnico più importante a cui prestare attenzione per non farsi ingannare dal marketing?",
+    opts: ["La diagonale dello schermo in pollici", "Il numero di zone di local-dimming", "La presenza del logo MiniLED sulla confezione", "La profondità del pannello"],
+    ans: 1,
+    fb: "Il numero di zone di local-dimming è fondamentale: più zone ci sono, meglio è. Un MiniLED con poche zone può essere inferiore a un QLED più evoluto. Anche la disposizione (Full Array vs Edge) è importante."
+  },
+  {
+    q: "Cosa significa la sigla SQD-MiniLED e quale brand l'ha sviluppata?",
+    opts: ["Samsung Quantum Display MiniLED — Samsung", "Super Quantum Dot MiniLED — TCL", "Sequential Quad Dimming MiniLED — Hisense", "Sony Quantum Design MiniLED — Sony"],
+    ans: 1,
+    fb: "SQD-MiniLED significa Super Quantum Dot MiniLED ed è una tecnologia sviluppata da TCL. Mantiene i diodi blu abbinati a nanocristalli Super Quantum Dot di nuova generazione con maggiore efficienza e saturazione."
+  },
+  {
+    q: "Gli SQD-MiniLED sviluppati da TCL coprono quale percentuale dello spazio colore REC.2020?",
+    opts: ["75%", "90%", "97%", "100%"],
+    ans: 3,
+    fb: "Gli SQD-MiniLED di TCL sono in grado di coprire il 100% dello spazio colore REC.2020, il riferimento richiesto dai migliori contenuti HDR professionali."
+  },
+  {
+    q: "Negli RGB MiniLED, rispetto ai MiniLED tradizionali, come cambia la funzione del local-dimming?",
+    opts: ["Agisce solo sulla luminanza, come prima", "Agisce solo sui colori, eliminando il controllo luminanza", "Agisce sia sulla luminanza che sui singoli colori (color dimming)", "Viene eliminato perché i LED RGB non ne hanno bisogno"],
+    ans: 2,
+    fb: "Negli RGB MiniLED il local-dimming non interviene più solo sulla luminanza (più/meno luce), ma ora controlla anche i singoli colori in modo indipendente: si parla di 'color dimming'."
+  },
+  {
+    q: "Un TV MiniLED tradizionale dichiara 20.000 zone di local-dimming. Un RGB MiniLED dichiara anch'esso 20.000 'zone colore'. Quante sono in realtà le zone di local-dimming convenzionali del secondo?",
+    opts: ["20.000 (equivalenti)", "10.000", "6.666", "4.000"],
+    ans: 2,
+    fb: "Le 20.000 zone colore dell'RGB MiniLED vanno divise per 3 (i tre canali RGB indipendenti), ottenendo circa 6.666 zone di local-dimming convenzionale. Attenzione al marketing!"
+  },
+  {
+    q: "Con quale sigla commerciale LG propone la propria tecnologia RGB MiniLED?",
+    opts: ["True RGB", "Mini RGB", "QNED RGB", "LED Color Array"],
+    ans: 1,
+    fb: "LG chiama la propria versione di RGB MiniLED con la sigla 'Mini RGB'. Sony usa invece 'True RGB'. Tecnologicamente si tratta della stessa soluzione di retroilluminazione."
+  },
+  {
+    q: "Con quale nome commerciale Sony presenta la propria tecnologia basata su retroilluminazione RGB MiniLED?",
+    opts: ["Mini RGB", "Bravia RGB", "True RGB", "QLED RGB Pro"],
+    ans: 2,
+    fb: "Sony utilizza il nome 'True RGB' per la propria tecnologia RGB MiniLED. LG chiama la stessa soluzione 'Mini RGB'. Il principio tecnico di base è identico per tutti i brand."
+  },
+  {
+    q: "La tecnologia RGB MiniLED Evo (annunciata da Hisense) cosa aggiunge rispetto all'RGB MiniLED standard?",
+    opts: ["Un quinto colore: il viola ultravioletto", "Un quarto colore primario: lo 'sky blue' vicino al ciano", "Un quarto colore: il bianco neutro per migliorare la luminosità", "Niente: è solo un nome marketing senza differenze tecniche"],
+    ans: 1,
+    fb: "L'RGB MiniLED Evo aggiunge lo 'sky blue' (una quarta componente vicina al ciano) ai tre RGB tradizionali, formando una quaterna RGBC per coprire un gamut ancora più ampio e ridurre il tint-shift."
+  },
+  {
+    q: "Cosa indica il termine tecnico 'tint-shift' nel contesto dei televisori RGB MiniLED?",
+    opts: ["La variazione della dimensione dei pixel in base alla luminosità", "La riduzione della luminosità dei colori nel tempo (invecchiamento)", "La tendenza dei colori a virare quando le componenti RGB della retroilluminazione si mescolano", "Il ritardo nella risposta del pannello LCD ai cambi di scena rapidi"],
+    ans: 2,
+    fb: "Il tint-shift è la tendenza dei colori a modificare la propria tinta quando le componenti R, G e B della retroilluminazione si mescolano: ad esempio un bianco che 'contamina' il colore adiacente."
+  },
+  {
+    q: "Qual è la dimensione caratteristica dei diodi LED utilizzati nella tecnologia Micro RGB?",
+    opts: ["Superiore ai 200 micron (come i LED tradizionali)", "Tra 200 e 100 micron (come i MiniLED)", "Inferiore ai 100 micron", "Inferiore ai 10 micron (livello atomico)"],
+    ans: 2,
+    fb: "Un LED tradizionale supera i 200 µm, un MiniLED è tra 200 e 100 µm. Nel Micro RGB si scende sotto i 100 micron: questa miniaturizzazione è ciò che lo distingue tecnicamente."
+  },
+  {
+    q: "Quanti micro diodi LED indipendenti compongono ogni singolo 'punto luce' in un televisore Micro RGB Samsung?",
+    opts: ["3 (uno per colore primario)", "6 (due per ogni colore)", "9 (tre per ogni colore primario)", "12 (quattro per ogni colore)"],
+    ans: 2,
+    fb: "Ogni punto luce Micro RGB è formato da 3 elementi emissivi per ciascuno dei 3 colori primari (rosso, verde, blu), per un totale di 9 micro diodi LED indipendenti per punto luce."
+  },
+  {
+    q: "Se un TV Micro RGB non specifica esplicitamente le zone di local-dimming convenzionali, per quale numero bisogna dividere il dato dichiarato?",
+    opts: ["Per 3 (come gli RGB MiniLED)", "Per 6", "Per 9 (3 elementi × 3 colori per punto luce)", "Non va diviso: il dato è già quello reale"],
+    ans: 2,
+    fb: "Nel Micro RGB ogni punto luce ha 9 micro diodi (3 per colore × 3 colori). Il numero di zone dichiarato va quindi diviso per 9 per ottenere le zone di local-dimming convenzionali. Fondamentale per confronti corretti."
+  }
+];
+
+const TOTAL_TIME = 300; // 5 minuti in secondi
+const MAX_SCORE = 40;
+
+/* ========== SHUFFLE ========== */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildShuffledQuiz() {
+  // Mescola l'ordine delle domande
+  const shuffledQs = shuffle(QUESTIONS);
+  return shuffledQs.map(q => {
+    // Per ogni domanda, crea un array di indici [0,1,2,3] e mescolalo
+    const indices = shuffle([0, 1, 2, 3]);
+    const newOpts = indices.map(i => q.opts[i]);
+    // Il nuovo indice corretto è la posizione in cui è finita la risposta originalmente corretta
+    const newAns = indices.indexOf(q.ans);
+    return { q: q.q, opts: newOpts, ans: newAns, fb: q.fb };
+  });
+}
+
+/* ========== STATO ========== */
+let QUIZ = []; // versione mescolata, creata al click su Inizia
+let userName = '', userStore = '', userDate = '';
+let currentQ = 0;
+let answers = [];
+let score = 0;
+let timerInterval = null;
+let timeLeft = TOTAL_TIME;
+let quizEnded = false;
+let answered = false; // se la domanda corrente è stata risposta
+
+/* ========== REGISTRAZIONE ========== */
+function startQuiz() {
+  const nome = document.getElementById('inNome').value.trim();
+  const cognome = document.getElementById('inCognome').value.trim();
+  const store = document.getElementById('inStore').value;
+  if (!nome || !cognome || !store) {
+    alert('Per favore compila tutti i campi prima di iniziare.');
+    return;
+  }
+  userName = nome + ' ' + cognome;
+  userStore = store;
+  const now = new Date();
+  userDate = now.toLocaleDateString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric' }) +
+             ' ore ' + now.toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' });
+
+  QUIZ = buildShuffledQuiz();
+  answers = new Array(QUIZ.length).fill(null);
+
+  document.getElementById('regScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  startTimer();
+  showQuestion(0);
+}
+
+/* ========== TIMER ========== */
+function startTimer() {
+  updateTimerUI();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerUI();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      endQuiz(true);
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const display = document.getElementById('timerDisplay');
+  const bar = document.getElementById('timerBar');
+  display.textContent = m + ':' + String(s).padStart(2, '0');
+  const pct = (timeLeft / TOTAL_TIME) * 100;
+  bar.style.width = pct + '%';
+  const cls = timeLeft <= 30 ? 'danger' : timeLeft <= 90 ? 'warn' : '';
+  display.className = 'timer-display ' + cls;
+  bar.className = 'timer-bar-fill ' + cls;
+}
+
+/* ========== DOMANDE ========== */
+function showQuestion(idx) {
+  answered = false;
+  const q = QUIZ[idx];
+  document.getElementById('qNumber').textContent = 'DOMANDA ' + (idx+1) + ' / ' + QUIZ.length;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progressInfo').textContent = 'Domanda ' + (idx+1) + ' di ' + QUIZ.length;
+  document.getElementById('feedbackBox').style.display = 'none';
+  document.getElementById('btnNext').style.display = 'none';
+
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    wrap.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx) {
+  if (answered || quizEnded) return;
+  answered = true;
+  const q = QUIZ[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const isCorrect = idx === q.ans;
+  answers[currentQ] = isCorrect;
+
+  // Evidenzia scelta
+  btns[idx].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) btns[q.ans].classList.add('reveal');
+
+  // Feedback
+  const fb = document.getElementById('feedbackBox');
+  const fbTitle = document.getElementById('fbTitle');
+  const fbText = document.getElementById('fbText');
+  fb.style.display = 'block';
+  if (isCorrect) {
+    fb.className = 'feedback-box correct-fb';
+    fbTitle.textContent = '✓ Risposta corretta! +2 punti';
+  } else {
+    fb.className = 'feedback-box wrong-fb';
+    fbTitle.textContent = '✗ Risposta errata. 0 punti';
+  }
+  fbText.textContent = q.fb;
+
+  const btnNext = document.getElementById('btnNext');
+  btnNext.style.display = 'block';
+  btnNext.textContent = currentQ < QUIZ.length - 1 ? 'PROSSIMA DOMANDA →' : 'VEDI RISULTATI →';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= QUIZ.length) {
+    endQuiz(false);
+  } else {
+    showQuestion(currentQ);
+  }
+}
+
+/* ========== FINE QUIZ ========== */
+function endQuiz(timeout) {
+  if (quizEnded) return;
+  quizEnded = true;
+  clearInterval(timerInterval);
+
+  // Se timeout e c'è una domanda corrente non risposta, già null
+  // Calcola score
+  let correct = 0, wrong = 0, skipped = 0;
+  answers.forEach(a => {
+    if (a === true)  correct++;
+    else if (a === false) wrong++;
+    else skipped++;
+  });
+  // Domande non ancora mostrate = skipped
+  // (se timeout, le domande da currentQ+1 in poi sono null già)
+
+  // Se timeout e la domanda corrente era mostrata ma non risposta
+  if (timeout && !answered && currentQ < QUIZ.length) {
+    // già null, già contata come skipped
+  }
+
+  const finalScore = (correct * 2) - skipped;
+  const pct = Math.round((finalScore / MAX_SCORE) * 100);
+
+  // Show penalty toast if skipped > 0
+  if (timeout && skipped > 0) {
+    const toast = document.getElementById('penaltyToast');
+    toast.textContent = `Tempo scaduto! −${skipped} punt${skipped>1?'i':'o'} per ${skipped} domand${skipped>1?'e':'a'} non rispost${skipped>1?'e':'a'}`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+
+  document.getElementById('quizScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+
+  // Score circle
+  const circle = document.getElementById('scoreCircle');
+  const scoreNum = document.getElementById('scoreNum');
+  const verdictBadge = document.getElementById('verdictBadge');
+  const verdictText = document.getElementById('verdictText');
+  const adviceText = document.getElementById('adviceText');
+
+  scoreNum.textContent = finalScore;
+
+  let vColor, vLabel, vDesc, vAdvice;
+  if (finalScore >= 36) {
+    vColor = '#10b981'; vLabel = '🏆 Eccellente';
+    vDesc = 'Preparazione ottima. Conosci perfettamente le tecnologie display LCD e sai distinguere le sigle con precisione tecnica.';
+    vAdvice = 'Ottimo lavoro! Sei pronto per guidare i clienti più esigenti nella scelta tra MiniLED, SQD-MiniLED, RGB MiniLED e Micro RGB. Continua ad aggiornarti sulle novità TCL, Samsung e LG per il 2026.';
+  } else if (finalScore >= 28) {
+    vColor = '#00c2ff'; vLabel = '👍 Buono';
+    vDesc = 'Buona conoscenza delle tecnologie TV. Comprendi le differenze principali tra le varie sigle e sai orientare il cliente.';
+    vAdvice = 'Hai una solida base. Per migliorare ulteriormente, ripassate i concetti di local-dimming convenzionale vs color dimming, e la differenza tra SQD-MiniLED (TCL) e RGB MiniLED (LG/Sony). Attenzione alle "trappole" del marketing sul numero di zone.';
+  } else if (finalScore >= 16) {
+    vColor = '#f59e0b'; vLabel = '📘 Sufficiente';
+    vDesc = 'Conoscenza di base delle tecnologie TV. Riesci a distinguere le categorie principali ma alcuni dettagli tecnici ti sfuggono ancora.';
+    vAdvice = 'Rileggi con attenzione la guida HDblog sulle sigle TV 2026. Concentrati in particolare su: differenza retroilluminazione vs auto-emissivo, come calcolare le zone reali di local-dimming negli RGB MiniLED, e cosa distingue Micro RGB (sub-100 µm, 9 LED per punto) dai MiniLED tradizionali.';
+  } else if (finalScore >= 4) {
+    vColor = '#ef4444'; vLabel = '⚠️ Insufficiente';
+    vDesc = 'La preparazione sulle tecnologie display necessita di un approfondimento significativo.';
+    vAdvice = 'Ti consiglio di dedicare almeno un\'ora alla lettura della guida completa sulle sigle TV. Parti dai concetti base (retroilluminazione vs auto-emissivo, QLED, FALD) e poi avanza verso MiniLED, SQD-MiniLED e Micro RGB. Riprova il quiz dopo lo studio!';
+  } else {
+    vColor = '#7c3aed'; vLabel = '📚 Da rivedere';
+    vDesc = 'Le conoscenze sulle tecnologie display TV richiedono una formazione urgente e approfondita.';
+    vAdvice = 'Parti dalle basi: studia la differenza fondamentale tra display auto-emissivi (OLED) e retroilluminati (LCD/LED/MiniLED). Poi approfondisci una tecnologia alla volta: QLED → MiniLED → SQD-MiniLED → RGB MiniLED → Micro RGB. Il reparto TV ha bisogno di personale ben preparato su questi argomenti!';
+  }
+
+  circle.style.borderColor = vColor;
+  scoreNum.style.color = vColor;
+  verdictBadge.textContent = vLabel;
+  verdictBadge.style.background = vColor + '22';
+  verdictBadge.style.color = vColor;
+  verdictBadge.style.border = '1px solid ' + vColor + '55';
+  verdictText.textContent = vDesc;
+  adviceText.textContent = vAdvice;
+
+  document.getElementById('statCorr').textContent = correct;
+  document.getElementById('statWrong').textContent = wrong;
+  document.getElementById('statSkip').textContent = skipped;
+
+  // Elenco risposte errate/non date
+  const wrongList = document.getElementById('wrongList');
+  const errors = [];
+  answers.forEach((a, i) => {
+    if (a !== true) {
+      errors.push({ idx: i, skipped: a === null });
+    }
+  });
+
+  if (errors.length > 0) {
+    let html = '<div class="wrong-list-title">Risposte da rivedere (' + errors.length + ')</div>';
+    errors.forEach(e => {
+      const q = QUIZ[e.idx];
+      html += `<div class="wrong-item">
+        <div class="wi-q">D${e.idx+1}: ${q.q}</div>
+        <div class="wi-a">${e.skipped ? '— Non risposta' : '✗ Risposta errata'}</div>
+        <div class="wi-c">✓ Risposta corretta: ${q.opts[q.ans]}</div>
+      </div>`;
+    });
+    wrongList.innerHTML = html;
+  }
+
+  document.getElementById('dateRow').textContent = 'Test completato il ' + userDate;
+
+  // Salva dati globali per la mail
+  window._quizResult = { finalScore, pct, correct, wrong, skipped, vLabel: vLabel.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').trim(), errors };
+}
+
+/* ========== INVIO EMAIL ========== */
+function sendEmail() {
+  const r = window._quizResult;
+  if (!r) return;
+
+  const subject = encodeURIComponent(`[Quiz TV Tecnologie Display] ${userName} — ${userStore} — ${r.finalScore}/40 (${r.pct}%)`);
+
+  let errorDetail = '';
+  r.errors.forEach(e => {
+    const q = QUIZ[e.idx];
+    errorDetail += `D${e.idx+1}: ${q.q}\n`;
+    errorDetail += `  → ${e.skipped ? 'Non risposta' : 'Risposta errata'}\n`;
+    errorDetail += `  ✓ Corretta: ${q.opts[q.ans]}\n\n`;
+  });
+
+  const body = encodeURIComponent(
+`RISULTATO QUIZ — Tecnologie Display TV 2026
+DML Italia · Formazione Prodotto
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Venditore:    ${userName}
+Punto vendita: ${userStore}
+Data e ora:   ${userDate}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PUNTEGGIO FINALE:  ${r.finalScore} / 40  (${r.pct}%)
+Giudizio:     ${r.vLabel.replace(/^\W+/,'')}
+
+Domande corrette:     ${r.correct} / 20  (+${r.correct*2} pt)
+Domande errate:       ${r.wrong} / 20  (0 pt)
+Domande non risposte: ${r.skipped} / 20  (-${r.skipped} pt)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${r.errors.length > 0 ? 'DETTAGLIO ERRORI:\n\n' + errorDetail : 'Nessun errore — Punteggio perfetto!'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Messaggio generato automaticamente dal sistema quiz DML Italia]`
+  );
+
+  window.location.href = `mailto:d.pavoni@dml-italia.com?subject=${subject}&body=${body}`;
+}
+</script>
+</body>
+</html>
